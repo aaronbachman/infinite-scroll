@@ -1,0 +1,38 @@
+.left-sidebar-container {
+  position: absolute;
+  top: 131px;
+  left: 50px;
+  width: 300px;
+  border: 1px solid #e0e0e0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  bottom: -131px;
+  margin-bottom: 131px;
+}
+
+.left-sidebar-container::-webkit-scrollbar {
+  display: none;
+}
+
+.data-row {
+  padding-left: 20px;
+  text-align: left;
+  min-height: 25px;
+  height: 25px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  border-bottom: 1px #e0e0e0 solid;
+  font-size: 12px;
+}
+
+
+.blank-full {
+  height: 100%;
+  width: 100%;
+}
+
+.padding {
+  width: 100%;
+  position: relative;
+}

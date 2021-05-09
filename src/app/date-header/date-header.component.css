@@ -1,0 +1,10 @@
+.date-header-container {
+  height: 40px;
+  position: absolute;
+  top: 90px;
+  left: 351px;
+  margin-right: 351px;
+  right: -351px;
+  overflow: hidden;
+  border: 1px #e0e0e0 solid;
+}

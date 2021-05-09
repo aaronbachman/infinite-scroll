@@ -1,0 +1,9 @@
+<div class="left-sidebar-container" #leftSidebarContainer id="leftSidebarContainer">
+  <div #paddingTop class="padding"></div>
+  <div class="data-row" *ngFor="let row of rows">
+    <div class="blank-full" #firstRow *ngIf="row.isFirst">{{row.name}}</div>
+    <div *ngIf="!row.isFirst && !row.isLast">{{row.name}}</div>
+    <div class="blank-full" #lastRow *ngIf="row.isLast">{{row.name}}</div>
+  </div>
+  <div #paddingBottom class="padding"></div>
+</div>
