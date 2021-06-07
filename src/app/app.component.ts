@@ -13,9 +13,6 @@ export class AppComponent {
     private workspaceService: WorkspaceService,
 
   ) {
-    // if (!this.workspaceQuery.getCount()) {
       this.workspaceService.initialLoad();
-
-    // }
   }
 }

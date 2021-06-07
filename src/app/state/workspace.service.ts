@@ -34,6 +34,7 @@ export class WorkspaceService {
   rowsPerPage = 25;
 
   initialLoad(): void {
+    // This is a random number of rows
     this.workspace.totalRows = this.getTotalRows();
 
     if (this.workspace.totalRows >= this.rowLimit) {
@@ -42,11 +43,11 @@ export class WorkspaceService {
 
     this.workspace.rows = [];
 
-    const columns = this.getColumns();
     for (let i = 0; i < this.workspace.totalRows; i++) {
       this.workspace.rows.push({id: i, name: 'Row #' + i});
     }
 
+    // Using timeout just to mock the server response of 2 seconds.
     setTimeout(() => {
       this.workspaceStore.add(this.workspace);
       this.workspaceStore.setActive(this.workspace.id);
@@ -100,16 +101,5 @@ export class WorkspaceService {
 
   getTotalRows(): number {
     return Math.floor(Math.random() * (2000 - 2) + 2);
-  }
-
-  getColumns(): void{
-    const now = new Date();
-    const end = new Date(now.getFullYear(), now.getMonth() + 3, now.getDay());
-    const daysOfYear = [];
-    for (const d = new Date(now.getFullYear(), now.getMonth() - 1, now.getDay()); d <= end; d.setDate(d.getDate() + 1)) {
-      const date = new Date(d);
-      daysOfYear.push(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
-    }
-    console.log(daysOfYear);
   }
 }
