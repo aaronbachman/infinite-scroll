@@ -26,7 +26,6 @@
   font-size: 12px;
 }
 
-
 .blank-full {
   height: 100%;
   width: 100%;
@@ -35,4 +34,15 @@
 .padding {
   width: 100%;
   position: relative;
+}
+
+.loading {
+  position: absolute;
+  right: 0;
+  background: rgba(0, 0, 0, 0.06);
+  top: 131px;
+  left: 50px;
+  width: 301px;
+  bottom: -131px;
+  margin-bottom: 131px;
 }

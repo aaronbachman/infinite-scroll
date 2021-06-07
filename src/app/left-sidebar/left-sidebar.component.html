@@ -1,9 +1,10 @@
-<div class="left-sidebar-container" #leftSidebarContainer id="leftSidebarContainer">
+<div class="left-sidebar-container" #leftSidebarContainer id="leftSidebarContainer" *ngIf="workspace">
   <div #paddingTop class="padding"></div>
-  <div class="data-row" *ngFor="let row of rows">
-    <div class="blank-full" #firstRow *ngIf="row.isFirst">{{row.name}}</div>
-    <div *ngIf="!row.isFirst && !row.isLast">{{row.name}}</div>
-    <div class="blank-full" #lastRow *ngIf="row.isLast">{{row.name}}</div>
+  <div class="data-row" *ngFor="let row of workspace.rows">
+    <div class="blank-full" #firstRow *ngIf="row.id === firstRowId">{{row.name}}</div>
+    <div *ngIf="row.id !== firstRowId && row.id !== lastRowId">{{row.name}}</div>
+    <div class="blank-full" #lastRow *ngIf="row.id === lastRowId">{{row.name}}</div>
   </div>
   <div #paddingBottom class="padding"></div>
 </div>
+<div class="loading" *ngIf="loading"></div>

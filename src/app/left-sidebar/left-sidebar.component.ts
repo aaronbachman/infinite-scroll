@@ -1,6 +1,8 @@
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {DataService} from '../state/data.service';
-import {Row} from '../state/data.model';
+import {WorkspaceService} from '../state/workspace.service';
+import {Workspace} from '../state/workspace.model';
+import {WorkspaceQuery} from '../state/workspace.query';
+import {WorkspaceStore} from '../state/workspace.store';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -16,30 +18,45 @@ export class LeftSidebarComponent implements OnInit {
   @ViewChild('paddingBottom') paddingBottom: ElementRef;
 
   constructor(
-    private dataService: DataService,
+    private workspaceService: WorkspaceService,
+    private workspaceQuery: WorkspaceQuery,
+    private workspaceStore: WorkspaceStore,
     private renderer2: Renderer2
   ) {
   }
 
-  rows: Row[];
-
-  page = 0;
+  workspace: Workspace;
   previousId: string;
-  totalRows: number;
   totalHeight: number;
+  firstRowId: number;
+  lastRowId: number;
+  loading: boolean;
 
   ngOnInit(): void {
-    this.dataService.totalRows$.subscribe((totalRows: number) => {
-      console.log('total rows: ' + totalRows);
-      this.totalRows = totalRows;
-      this.totalHeight = totalRows * 25;
+    this.workspaceQuery.selectLoading().subscribe((loading: boolean) => {
+      this.loading = loading;
+      if (this.leftSidebarContainer) {
+        if (loading) {
+          this.renderer2.setStyle(this.leftSidebarContainer.nativeElement, 'overflow-y', 'hidden');
+        } else {
+          this.renderer2.setStyle(this.leftSidebarContainer.nativeElement, 'overflow-y', 'scroll');
+        }
+      }
     });
 
-    this.dataService.initialLoad().subscribe((rows: Row[]) => {
-      this.rows = rows;
-      this.resetObservers();
-      this.setInterval();
-      this.setPadding();
+    this.workspaceService.activeWorkspace$.subscribe((workspace: Workspace) => {
+      if (workspace.rows.length) {
+        this.totalHeight = workspace.totalRows * 25;
+        if (workspace.page > 0) {
+          this.firstRowId = workspace.rows[0].id;
+        }
+        this.lastRowId = workspace.rows[workspace.rows.length - 1].id;
+        this.workspace = workspace;
+        this.setPadding();
+        setTimeout(() => {
+          this.setInterval();
+        }, 500);
+      }
     });
   }
 
@@ -59,27 +76,13 @@ export class LeftSidebarComponent implements OnInit {
     }, 100);
   }
 
-
-  resetObservers(): void {
-    this.rows.forEach((row: Row) => {
-      row.isFirst = false;
-      row.isLast = false;
-    });
-    if (this.page > 0) {
-      this.rows[0].isFirst = true;
-    }
-    if (this.totalRows > this.rows.length) {
-      this.rows[this.rows.length - 1].isLast = true;
-    }
-  }
-
   checkLastRow(): void {
     const config = {
       root: this.leftSidebarContainer.nativeElement,
       rootMargin: '0px',
       threshold: 0
     };
-    const loadNextPage = new IntersectionObserver((e) => {
+    const loadNextPage = new IntersectionObserver((e: IntersectionObserverEntry[]) => {
       if (e[0].isIntersecting) {
         loadNextPage.disconnect();
         this.loadNextPage();
@@ -94,7 +97,7 @@ export class LeftSidebarComponent implements OnInit {
       rootMargin: '0px',
       threshold: 0
     };
-    const loadPreviousPage = new IntersectionObserver((e) => {
+    const loadPreviousPage = new IntersectionObserver((e: IntersectionObserverEntry[]) => {
       if (e[0].isIntersecting) {
         this.previousId = e[0].target.id;
         loadPreviousPage.disconnect();
@@ -105,38 +108,19 @@ export class LeftSidebarComponent implements OnInit {
   }
 
   loadNextPage(): void {
-    this.page++;
-    console.log('load next page: ' + this.page);
-    this.dataService.getNextPage(this.page).subscribe((rows: Row[]) => {
-      const newRow = this.rows.slice(25, this.rows.length);
-      newRow.push(...rows);
-      this.rows = newRow;
-      this.resetObservers();
-      this.setInterval();
-      this.setPadding();
-    });
+    this.workspaceService.getNextPage();
   }
 
   setPadding(): void {
-    this.renderer2.setStyle(this.paddingTop.nativeElement, 'height', this.page * 650 + 'px');
-    this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', this.totalHeight - (this.page * 625) + 'px');
+    if (this.paddingTop) {
+      this.renderer2.setStyle(this.paddingTop.nativeElement, 'height', (this.workspace.page * 650) + 'px');
+    }
+    if (this.paddingBottom) {
+      this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', (this.totalHeight - (this.workspace.page * 625)) + 'px');
+    }
   }
 
   loadPreviousPage(): void {
-    this.page--;
-    if (this.page >= 0) {
-      console.log('load previous page: ' + this.page);
-      this.dataService.getPreviousPage(this.page).subscribe((rows: Row[]) => {
-        const slicedRows = this.rows.slice(0, 75);
-        const newRow = rows;
-        newRow.push(...slicedRows);
-        this.rows = newRow;
-        this.resetObservers();
-        this.setInterval();
-        this.setPadding();
-      });
-    } else {
-      this.page = 0;
-    }
+    this.workspaceService.getPreviousPage();
   }
 }

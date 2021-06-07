@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {WorkspaceService} from './state/workspace.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'infinite-scroll';
+
+  constructor(
+    private workspaceService: WorkspaceService,
+
+  ) {
+    // if (!this.workspaceQuery.getCount()) {
+      this.workspaceService.initialLoad();
+
+    // }
+  }
 }
