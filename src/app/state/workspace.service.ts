@@ -16,7 +16,8 @@ export class WorkspaceService implements OnDestroy {
     page: 0,
     totalRows: 0,
     rows: [],
-    scrollTop: 0
+    scrollTop: 0,
+    lastPage: false
   };
 
   activeWorkspace$ = new BehaviorSubject<Workspace>(this.workspace);
@@ -41,11 +42,11 @@ export class WorkspaceService implements OnDestroy {
   initialLoad(): void {
     // This is a random number of rows
     this.workspace.totalRows = this.getTotalRows();
-    if (this.workspace.totalRows < this.rowLimit) {
+    if (this.workspace.totalRows <= this.rowLimit) {
       this.lastPage = 0;
     } else {
       this.lastPage = Math.floor((this.workspace.totalRows - this.rowLimit) / this.rowsPerPage);
-      this.remaining = this.workspace.totalRows - (this.rowLimit + (this.rowsPerPage * this.lastPage));
+      this.remaining = (this.workspace.totalRows - (this.rowLimit + (this.rowsPerPage * this.lastPage)));
     }
 
     if (this.workspace.totalRows <= this.rowLimit) {
@@ -55,7 +56,7 @@ export class WorkspaceService implements OnDestroy {
     this.workspace.rows = [];
     this.workspace.columns = this.getColumns();
     for (let i = 0; i <= this.rowLimit; i++) {
-      this.workspace.rows.push({id: i, name: 'Row #' + (i + 1)});
+      this.workspace.rows.push({id: i, name: 'Row #' + i});
     }
 
     // Using timeout just to mock the server response of 2 seconds.
@@ -80,12 +81,13 @@ export class WorkspaceService implements OnDestroy {
     this.workspaceStore.setLoading(true);
     const newPage = this.workspace.page + 1;
     this.workspaceStore.updateActive({page: newPage});
-    const start = (newPage * this.rowsPerPage) + (this.rowLimit - this.rowsPerPage);
+    const start = ((newPage * this.rowsPerPage) + (this.rowLimit - this.rowsPerPage));
     let end = start + this.rowsPerPage;
     if (isLast && this.remaining) {
+      this.workspaceStore.updateActive({lastPage: true});
       end = start + this.remaining;
     }
-    const rows = this.workspace.rows.slice(25, this.workspace.rows.length);
+    const rows = this.workspace.rows.slice(25, this.workspace.rows.length - 1);
     for (let i = start; i <= end; i++) {
       rows.push({id: i, name: 'Row #' + i});
     }
@@ -133,7 +135,7 @@ export class WorkspaceService implements OnDestroy {
     const date = moment().subtract(10, 'days');
     let count = 0;
 
-    while (count < 250) {
+    while (count < 100) {
       const formattedDate = date.format('YYYY-MM-DD');
       columns.push({date: formattedDate});
       date.add(1, 'day');

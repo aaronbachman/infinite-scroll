@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {WorkspaceService} from '../state/workspace.service';
 import {Workspace} from '../state/workspace.model';
 import {WorkspaceQuery} from '../state/workspace.query';
@@ -10,7 +10,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './left-sidebar.component.html',
   styleUrls: ['./left-sidebar.component.css']
 })
-export class LeftSidebarComponent implements OnInit, OnDestroy {
+export class LeftSidebarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('leftSidebarContainer') leftSidebarContainer: ElementRef;
   @ViewChild('firstRow') firstRow: ElementRef;
@@ -20,19 +20,24 @@ export class LeftSidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     public workspaceService: WorkspaceService,
-    private workspaceQuery: WorkspaceQuery,
+    public workspaceQuery: WorkspaceQuery,
     private workspaceStore: WorkspaceStore,
-    private renderer2: Renderer2
+    private renderer2: Renderer2,
   ) {
   }
+
   scrollTop = this.workspaceService.scrollTop$;
   workspace: Workspace;
   previousId: string;
   totalHeight: number;
   firstRowId: number;
   lastRowId: number;
-  loading: boolean;
   subscription: Subscription = new Subscription();
+  loading = false;
+
+  ngAfterViewInit(): void {
+    this.setInterval();
+  }
 
   ngOnInit(): void {
     this.subscription.add(this.workspaceQuery.selectLoading().subscribe((loading: boolean) => {
@@ -55,15 +60,16 @@ export class LeftSidebarComponent implements OnInit, OnDestroy {
         this.lastRowId = workspace.rows[workspace.rows.length - 1].id;
         this.workspace = workspace;
         this.setPadding();
-        setTimeout(() => {
-          this.setInterval();
-        }, 500);
+        this.setInterval();
       }
     }));
   }
 
   setInterval(): void {
     const firstRowInterval = setInterval(() => {
+      if (this.workspace.page === 0) {
+        clearInterval(firstRowInterval);
+      }
       if (this.firstRow) {
         this.checkFirstRow();
         clearInterval(firstRowInterval);
@@ -121,7 +127,11 @@ export class LeftSidebarComponent implements OnInit, OnDestroy {
       this.renderer2.setStyle(this.paddingTop.nativeElement, 'height', (this.workspace.page * 648) + 'px');
     }
     if (this.paddingBottom) {
-      this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', (this.totalHeight - (this.workspace.page * 625)) + 'px');
+      let height = (this.totalHeight - (this.workspace.page * 625));
+      if (this.workspace.lastPage) {
+        height = 0;
+      }
+      this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', height + 'px');
     }
   }
 

@@ -1,11 +1,14 @@
-<div #table class="container" *ngIf="workspace | async as currentWorkspace">
-  <table *ngIf="currentWorkspace.columns" style="border-spacing: 0;">
-    <tr *ngFor="let row of currentWorkspace.rows">
+<div #table class="grid-container" *ngIf="workspace">
+  <table *ngIf="workspace.columns" style="border-spacing: 0;">
+    <div #paddingTop class="padding"></div>
+    <tr *ngFor="let row of workspace.rows">
       <ng-container>
-        <td class="row-column" *ngFor="let column of currentWorkspace.columns">
+        <td class="row-column" *ngFor="let column of workspace.columns">
           <div class="full-cell"></div>
         </td>
       </ng-container>
     </tr>
+    <div #paddingBottom class="padding"></div>
   </table>
 </div>
+<div class="loading" *ngIf="workspaceQuery.selectLoading() | async"></div>

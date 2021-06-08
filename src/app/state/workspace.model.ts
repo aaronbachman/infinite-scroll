@@ -6,6 +6,7 @@ export interface Workspace {
   columns?: Column[];
   totalRows: number;
   page: number;
+  lastPage: boolean;
 }
 
 export interface Row {

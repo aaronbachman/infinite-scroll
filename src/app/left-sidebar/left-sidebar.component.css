@@ -1,16 +1,16 @@
-.left-sidebar-container {
+.left-side-container {
   position: absolute;
   top: 131px;
   left: 50px;
   width: 300px;
   border: var(--main-border);
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden !important;
   bottom: -131px;
   margin-bottom: 131px;
+  user-select: none;
 }
 
-.left-sidebar-container::-webkit-scrollbar {
+.left-side-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -18,7 +18,7 @@
   padding-left: 20px;
   text-align: left;
   height: 26px;
-  max-height: 26px;
+  min-height: 28px;
   width: 100%;
   border-bottom: var(--main-border);
   font-size: var(--normal-font-size);
@@ -43,4 +43,14 @@
   width: 301px;
   bottom: -131px;
   margin-bottom: 131px;
+  cursor: wait;
+  overflow: hidden;
+}
+
+.full-cell {
+  height: 26px;
+  width: 100%;
+  position: relative;
+  font-size: 15px;
+  padding-top: 6px;
 }
