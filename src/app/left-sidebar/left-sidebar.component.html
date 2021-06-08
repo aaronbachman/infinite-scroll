@@ -1,9 +1,9 @@
-<div class="left-sidebar-container" #leftSidebarContainer id="leftSidebarContainer" *ngIf="workspace">
+<div class="left-sidebar-container" #leftSidebarContainer id="leftSidebarContainer" [scrollTop]="workspaceService.scrollTop$ | async">
   <div #paddingTop class="padding"></div>
   <div class="data-row" *ngFor="let row of workspace.rows">
-    <div class="blank-full" #firstRow *ngIf="row.id === firstRowId">{{row.name}}</div>
-    <div *ngIf="row.id !== firstRowId && row.id !== lastRowId">{{row.name}}</div>
-    <div class="blank-full" #lastRow *ngIf="row.id === lastRowId">{{row.name}}</div>
+    <div class="blank-full" #firstRow *ngIf="row.id === firstRowId">{{'Workspace# ' + workspace.id + ' - ' + row.name}}</div>
+    <div *ngIf="row.id !== firstRowId && row.id !== lastRowId">{{'Workspace# ' + workspace.id + ' - ' + row.name}}</div>
+    <div class="blank-full" #lastRow *ngIf="row.id === lastRowId">{{'Workspace# ' + workspace.id + ' - ' + row.name}}</div>
   </div>
   <div #paddingBottom class="padding"></div>
 </div>

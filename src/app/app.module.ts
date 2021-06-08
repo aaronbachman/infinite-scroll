@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import { DateHeaderComponent } from './date-header/date-header.component';
 import { LeftSidebarComponent } from './left-sidebar/left-sidebar.component';
@@ -10,13 +9,15 @@ import {WorkspaceStore} from './state/workspace.store';
 import {WorkspaceService} from './state/workspace.service';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { environment } from '../environments/environment';
+import { RowCountComponent } from './row-count/row-count.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DateHeaderComponent,
     LeftSidebarComponent,
-    MainGridComponent
+    MainGridComponent,
+    RowCountComponent
   ],
   imports: [
     BrowserModule,

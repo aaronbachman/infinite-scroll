@@ -3,7 +3,7 @@
   top: 131px;
   left: 50px;
   width: 300px;
-  border: 1px solid #e0e0e0;
+  border: var(--main-border);
   overflow-y: scroll;
   overflow-x: hidden;
   bottom: -131px;
@@ -17,13 +17,11 @@
 .data-row {
   padding-left: 20px;
   text-align: left;
-  min-height: 25px;
-  height: 25px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  height: 26px;
+  max-height: 26px;
   width: 100%;
-  border-bottom: 1px #e0e0e0 solid;
-  font-size: 12px;
+  border-bottom: var(--main-border);
+  font-size: var(--normal-font-size);
 }
 
 .blank-full {
@@ -39,7 +37,7 @@
 .loading {
   position: absolute;
   right: 0;
-  background: rgba(24, 24, 24, 0.03);
+  background: var(--loading-background);
   top: 131px;
   left: 50px;
   width: 301px;

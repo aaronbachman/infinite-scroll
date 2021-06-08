@@ -6,5 +6,5 @@
   margin-right: 351px;
   right: -351px;
   overflow: hidden;
-  border: 1px #e0e0e0 solid;
+  border: var(--main-border);
 }

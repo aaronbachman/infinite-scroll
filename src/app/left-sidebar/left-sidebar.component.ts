@@ -1,15 +1,16 @@
-import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {WorkspaceService} from '../state/workspace.service';
 import {Workspace} from '../state/workspace.model';
 import {WorkspaceQuery} from '../state/workspace.query';
 import {WorkspaceStore} from '../state/workspace.store';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-left-sidebar',
   templateUrl: './left-sidebar.component.html',
   styleUrls: ['./left-sidebar.component.css']
 })
-export class LeftSidebarComponent implements OnInit {
+export class LeftSidebarComponent implements OnInit, OnDestroy {
 
   @ViewChild('leftSidebarContainer') leftSidebarContainer: ElementRef;
   @ViewChild('firstRow') firstRow: ElementRef;
@@ -18,22 +19,23 @@ export class LeftSidebarComponent implements OnInit {
   @ViewChild('paddingBottom') paddingBottom: ElementRef;
 
   constructor(
-    private workspaceService: WorkspaceService,
+    public workspaceService: WorkspaceService,
     private workspaceQuery: WorkspaceQuery,
     private workspaceStore: WorkspaceStore,
     private renderer2: Renderer2
   ) {
   }
-
+  scrollTop = this.workspaceService.scrollTop$;
   workspace: Workspace;
   previousId: string;
   totalHeight: number;
   firstRowId: number;
   lastRowId: number;
   loading: boolean;
+  subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
-    this.workspaceQuery.selectLoading().subscribe((loading: boolean) => {
+    this.subscription.add(this.workspaceQuery.selectLoading().subscribe((loading: boolean) => {
       this.loading = loading;
       if (this.leftSidebarContainer) {
         if (loading) {
@@ -42,9 +44,9 @@ export class LeftSidebarComponent implements OnInit {
           this.renderer2.setStyle(this.leftSidebarContainer.nativeElement, 'overflow-y', 'scroll');
         }
       }
-    });
+    }));
 
-    this.workspaceService.activeWorkspace$.subscribe((workspace: Workspace) => {
+    this.subscription.add(this.workspaceService.activeWorkspace$.subscribe((workspace: Workspace) => {
       if (workspace.rows.length) {
         this.totalHeight = workspace.totalRows * 25;
         if (workspace.page > 0) {
@@ -57,7 +59,7 @@ export class LeftSidebarComponent implements OnInit {
           this.setInterval();
         }, 500);
       }
-    });
+    }));
   }
 
   setInterval(): void {
@@ -108,12 +110,15 @@ export class LeftSidebarComponent implements OnInit {
   }
 
   loadNextPage(): void {
-    this.workspaceService.getNextPage();
+    const nextPage = this.workspaceService.getNextPage();
+    if (!nextPage) {
+      this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', '0');
+    }
   }
 
   setPadding(): void {
     if (this.paddingTop) {
-      this.renderer2.setStyle(this.paddingTop.nativeElement, 'height', (this.workspace.page * 650) + 'px');
+      this.renderer2.setStyle(this.paddingTop.nativeElement, 'height', (this.workspace.page * 648) + 'px');
     }
     if (this.paddingBottom) {
       this.renderer2.setStyle(this.paddingBottom.nativeElement, 'height', (this.totalHeight - (this.workspace.page * 625)) + 'px');
@@ -122,5 +127,9 @@ export class LeftSidebarComponent implements OnInit {
 
   loadPreviousPage(): void {
     this.workspaceService.getPreviousPage();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

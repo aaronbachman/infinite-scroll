@@ -1,0 +1,11 @@
+<div #table class="container" *ngIf="workspace | async as currentWorkspace">
+  <table *ngIf="currentWorkspace.columns" style="border-spacing: 0;">
+    <tr *ngFor="let row of currentWorkspace.rows">
+      <ng-container>
+        <td class="row-column" *ngFor="let column of currentWorkspace.columns">
+          <div class="full-cell"></div>
+        </td>
+      </ng-container>
+    </tr>
+  </table>
+</div>

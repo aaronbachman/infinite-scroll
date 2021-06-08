@@ -1,20 +1,18 @@
 export interface Workspace {
   id: number;
   isActive: boolean;
-  rows: Rows[];
+  scrollTop: number;
+  rows: Row[];
+  columns?: Column[];
   totalRows: number;
   page: number;
 }
 
-export interface Rows {
+export interface Row {
   id: number;
   name: string;
-  columns?: Columns[];
 }
 
-export interface Columns {
-  id: number;
+export interface Column {
   date: string;
-  upperLabel: string;
-  lowerLabel: string;
 }

@@ -1,0 +1,26 @@
+.container {
+  position: absolute;
+  top: 130px;
+  left: 350px;
+  right: -340px;
+  overflow: scroll;
+  cursor: move;
+  margin-right: 200px;
+  bottom: -130px;
+  margin-bottom: 130px;
+}
+
+.row-column {
+  height: 23px;
+  width: 40px;
+  min-height: 23px;
+  min-width: 40px;
+  border: 1px #e0e0e0 solid;
+  border-bottom: 1px #fff solid;
+}
+
+.full-cell {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}

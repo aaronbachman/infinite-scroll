@@ -1,1 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --main-border: 1px solid #e0e0e0;
+  --loading-background: rgba(24, 24, 24, 0.03);
+  --primary-text-color: #444444;
+  --normal-font-size: 12px;
+}
